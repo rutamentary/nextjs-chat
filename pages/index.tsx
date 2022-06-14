@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import React, { useState, useEffect, useRef } from "react";
+import React, {useState, useEffect, useRef, useMemo} from "react";
 import io from "socket.io-client";
 import styles from '../styles/Home.module.css'
 
@@ -13,24 +13,26 @@ interface ChatMessage {
 const Home: NextPage = () => {
 
   const [message, setMessage] = useState('');
-  let socket: any; 
+  const [messages, setMessages] = useState([]);
+  const socket = useMemo(() => io(), []);
 
   useEffect(() => { socketInitialize() }, []);
 
   const socketInitialize = async () => {
-    await fetch('/api/socketio')
-    socket = io();
-
+    await fetch('/api/socketio');
     socket.on('connect', () => {
-      console.log('connected')
-      socket.emit('hello');
+      console.log('connected');
+    });
+    socket.on('receivedMessage', (receivedMessage) => {
+      console.log(receivedMessage);
+      messages.push(receivedMessage);
+      setMessages([...messages]);
     });
   }
 
   const handleSendMessage = () => {
     if(!message || !message.trim()) return;
-
-    //emit message on the socket to those connected to the chat room
+    socket.emit('message', message);
   }
 
   return (
@@ -41,15 +43,21 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
+      <main>
         <div className='chatMessages'>
-          <p></p>
+          <ul>{
+            messages.map((msg) => {
+              return (
+                  <li>{msg}</li>
+              );
+            })
+          }</ul>
         </div>
         <div>
-          <input 
-            type='text' 
-            className='chatInput' 
-            placeholder='Enter a message' 
+          <input
+            type='text'
+            className='chatInput'
+            placeholder='Enter a message'
             value={message}
             onChange={(e) => {setMessage(e.target.value)}}
           >
@@ -59,19 +67,6 @@ const Home: NextPage = () => {
           </button>
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
