@@ -1,12 +1,31 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+import React, { useState, useEffect, useRef } from "react";
+import io from "socket.io-client";
 import styles from '../styles/Home.module.css'
+
+interface ChatMessage {
+  user: string;
+  message: string;
+}
 
 const Home: NextPage = () => {
 
   const [message, setMessage] = useState('');
+  let socket: any; 
+
+  useEffect(() => { socketInitialize() }, []);
+
+  const socketInitialize = async () => {
+    await fetch('/api/socketio')
+    socket = io();
+
+    socket.on('connect', () => {
+      console.log('connected')
+      socket.emit('hello');
+    });
+  }
 
   const handleSendMessage = () => {
     if(!message || !message.trim()) return;
