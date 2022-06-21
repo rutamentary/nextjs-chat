@@ -5,9 +5,9 @@ const ioHandler = (req, res) => {
     const io = new Server(res.socket.server)
 
     io.on('connection', socket => {
-      socket.on('message', msg => {
-        console.log(msg);
-        io.emit('receivedMessage', msg);
+      socket.on('message', messageObject => {
+        console.log(messageObject);
+        io.emit('receivedMessage', messageObject);
       })
     })
 
