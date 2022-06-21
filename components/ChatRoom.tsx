@@ -9,7 +9,6 @@ interface ChatMessage {
     timeSent: string;
 }
 
-
 interface ChatRoomProps{
     roomName: string;
 }
@@ -63,6 +62,7 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
                         messages.map((msg) => {
                             if(msg.user === user){
                                 return (
+                                    //TODO: Extract to ChatMessage component
                                     <li style={{backgroundColor: 'blue', color: 'white'}}>{msg.timeSent} {msg.user} : {msg.message}</li>
                                 );
                             }
@@ -73,7 +73,8 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
                     }</ul>
                 </div>
                 <div>
-                    <label>Enter your name</label>
+                    <label>Enter your name: </label>
+                    <br />
                     <input
                         type='text'
                         placeholder='Name'
@@ -91,6 +92,7 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
                         onChange={(e) => {setMessage(e.target.value)}}
                     >
                     </input>
+                    <br />
                     <button onClick={handleSendMessage}>
                         Send
                     </button>

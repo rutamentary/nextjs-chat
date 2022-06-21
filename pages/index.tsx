@@ -1,36 +1,27 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import React, {useState, useEffect, useRef, useMemo} from "react";
-import io from "socket.io-client";
-import styles from '../styles/Home.module.css'
-import ChatRoom from "../components/ChatRoom";
-
-interface ChatMessage {
-  user: string;
-  message: string;
-  timeSent: string;
-}
+import React, {useState} from "react";
+import Room from './[roomName]';
 
 const Home: NextPage = () => {
 
   const [chatroomName, setChatroomName] = useState<string>('');
-  if(!!chatroomName)
+
+  if(chatroomName.trim().length > 0)
   {
     return (
-        <ChatRoom/>
+      <Room />
     )
   }
   return (
       <form onSubmit={e => {
-          e.preventDefault()
-
+          e.preventDefault();
+          //TODO: navigate to room
       }}>
-        <label htmlFor="">Enter name of chatroom</label>
-          <br/>
-        <input type="text"/>
-          <br/>
-        <input type="submit" id="submitChatroomName" value="Submit"/>
+        <label>Enter name of chatroom</label>
+        <br/>
+        <input type="text" value={chatroomName} onChange={(e) => {setChatroomName(e.target.value)}}/>
+        <br/>
+        <input type="button" value="Submit"/>
       </form>
   )
 }
