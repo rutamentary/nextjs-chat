@@ -7,10 +7,11 @@ interface ChatMessage {
     user: string;
     message: string;
     timeSent: string;
+    roomName:  string | string[] | undefined;
 }
 
 interface ChatRoomProps{
-    roomName: string;
+    roomName: string | string[] | undefined;
 }
 
 const ChatRoom = ({roomName}: ChatRoomProps) => {
@@ -24,9 +25,9 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
     useEffect(() => { socketInitialize() }, []);
 
     const socketInitialize = async () => {
-        await fetch('/api/socketio');
+        await fetch('/api/socketio?room=' + roomName);
         socket.on('connect', () => {
-            console.log('connected');
+            console.log('connected to ' + roomName);
         });
         socket.on('receivedMessage', (receivedMessage: ChatMessage) => {
             messages.push(receivedMessage);
@@ -43,8 +44,10 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
         const messageObject: ChatMessage = {
             user: user,
             message: message,
-            timeSent: currentTime
+            timeSent: currentTime,
+            roomName: roomName
         }
+
         socket.emit('message', messageObject);
     }
 
@@ -62,7 +65,6 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
                         messages.map((msg) => {
                             if(msg.user === user){
                                 return (
-                                    //TODO: Extract to ChatMessage component
                                     <li style={{backgroundColor: 'blue', color: 'white'}}>{msg.timeSent} {msg.user} : {msg.message}</li>
                                 );
                             }
@@ -102,4 +104,4 @@ const ChatRoom = ({roomName}: ChatRoomProps) => {
     )
 }
 
-export default ChatRoom
+export default ChatRoom;

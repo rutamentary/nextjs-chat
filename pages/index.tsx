@@ -1,29 +1,33 @@
 import type { NextPage } from 'next'
 import React, {useState} from "react";
-import Room from './[roomName]';
+import Link from "next/link";
 
 const Home: NextPage = () => {
 
   const [chatroomName, setChatroomName] = useState<string>('');
+  const [hasName, setHasName] = useState<boolean>(false);
 
-  if(chatroomName.trim().length > 0)
-  {
-    return (
-      <Room />
-    )
+  function checkForName() {
+    if (chatroomName.trim().length > 0) {
+        setHasName(true)
+    }
   }
-  return (
-      <form onSubmit={e => {
-          e.preventDefault();
-          //TODO: navigate to room
-      }}>
-        <label>Enter name of chatroom</label>
-        <br/>
-        <input type="text" value={chatroomName} onChange={(e) => {setChatroomName(e.target.value)}}/>
-        <br/>
-        <input type="button" value="Submit"/>
-      </form>
-  )
+
+  if(hasName) {
+      return (<div>
+          <Link href={'/' + chatroomName}>Enter</Link>
+      </div>);
+  }
+
+   return (
+       <div>
+           <label>Enter name of chatroom</label>
+           <br/>
+           <input type="text" value={chatroomName} onChange={(e) => {setChatroomName(e.target.value)}} required />
+           <br/>
+           <input type="button" value="Submit" onClick={() => checkForName()}/>
+       </div>
+  );
 }
 
-export default Home
+export default Home;

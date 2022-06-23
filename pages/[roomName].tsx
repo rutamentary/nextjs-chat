@@ -6,9 +6,12 @@ const Room: NextPage = () => {
 
 const router = useRouter();
 
-const {roomName} = router.query;
+const {roomName } = router.query;
     return (
-        <ChatRoom roomName={roomName}/>
+        <div>
+            <h1>{roomName}</h1>
+            <ChatRoom roomName={roomName}/>
+        </div>
     )
 }
 

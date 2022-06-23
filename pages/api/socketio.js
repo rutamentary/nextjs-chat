@@ -1,13 +1,18 @@
 import { Server } from 'socket.io'
 
 const ioHandler = (req, res) => {
+
+  console.log(req.room);
+
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server)
 
     io.on('connection', socket => {
+      console.log('socket: ' + socket)
       socket.on('message', messageObject => {
         console.log(messageObject);
-        io.emit('receivedMessage', messageObject);
+        io.to(messageObject.roomName).emit('receivedMessage',messageObject);
+        //io.emit('receivedMessage', messageObject);
       })
     })
 
@@ -22,4 +27,4 @@ export const config = {
   }
 }
 
-export default ioHandler
+export default ioHandler;
